@@ -6,11 +6,12 @@ use Shopware\Core\Framework\ShopwareHttpException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ConstraintViolationException extends ShopwareHttpException
 {
     /**
-     * @var ConstraintViolationList
+     * @var ConstraintViolationListInterface
      */
     private $violations;
 
@@ -19,7 +20,7 @@ class ConstraintViolationException extends ShopwareHttpException
      */
     private $inputData;
 
-    public function __construct(ConstraintViolationList $violations, array $inputData)
+    public function __construct(ConstraintViolationListInterface $violations, array $inputData)
     {
         $this->mapErrorCodes($violations);
 
@@ -29,7 +30,7 @@ class ConstraintViolationException extends ShopwareHttpException
         parent::__construct('Caught {{ count }} violation errors.', ['count' => $violations->count()]);
     }
 
-    public function getRootViolations(): ConstraintViolationList
+    public function getRootViolations(): ConstraintViolationListInterface
     {
         $violations = new ConstraintViolationList();
         foreach ($this->violations as $violation) {
@@ -41,7 +42,7 @@ class ConstraintViolationException extends ShopwareHttpException
         return $violations;
     }
 
-    public function getViolations(?string $propertyPath = null): ConstraintViolationList
+    public function getViolations(?string $propertyPath = null): ConstraintViolationListInterface
     {
         if (!$propertyPath) {
             return $this->violations;
@@ -97,7 +98,7 @@ class ConstraintViolationException extends ShopwareHttpException
         return Response::HTTP_BAD_REQUEST;
     }
 
-    private function mapErrorCodes(ConstraintViolationList $violations): void
+    private function mapErrorCodes(ConstraintViolationListInterface $violations): void
     {
         /** @var ConstraintViolation $violation */
         foreach ($violations as $key => $violation) {
